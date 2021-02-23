@@ -13,12 +13,12 @@ kakao_opentalk_name = 'test.bot'
 
 
 # # 채팅방에 메시지 전송
-def kakao_sendtext(chatroom_name, text):
+def kakao_sendtext(chatroom_name, notice):
     # # 핸들 _ 채팅방
     hwndMain = win32gui.FindWindow( None, chatroom_name)
     hwndEdit = win32gui.FindWindowEx( hwndMain, None, "RICHEDIT50W", None)
 
-    win32api.SendMessage(hwndEdit, win32con.WM_SETTEXT, 0, text)
+    win32api.SendMessage(hwndEdit, win32con.WM_SETTEXT, 0, notice)
     SendReturn(hwndEdit)
 
 
@@ -94,7 +94,6 @@ def get_dwu_notice():
 
     s = "\n".join(a)
 
-    print(s)
     return s
 
 
@@ -108,7 +107,7 @@ def job():
     # realtimeList = naver_realtimeList()  # 네이버 실시간 검색어 상위 20개
     notice = get_dwu_notice()
     # kakao_sendtext(kakao_opentalk_name, f"{p_time_ymd_hms}\n{realtimeList}")  # 메시지 전송, time/실검
-    kakao_sendtext(kakao_opentalk_name, "test")  # 메시지 전송, time/실검
+    kakao_sendtext(kakao_opentalk_name, notice)  # 메시지 전송, time/실검
 
 
 
@@ -117,9 +116,9 @@ def main():
     sched.start()
 
     # # 매 분 5초마다 job_1 실행
-    # sched.add_job(job_1, 'cron', second='*/5', id="test_1")
+    sched.add_job(job, 'cron', second='*/5', id="test_1")
     # 매 시간 실행
-    schedule.every().hour.do(job)
+    #schedule.every().hour.do(job)
 
     count = 0
     while True:
