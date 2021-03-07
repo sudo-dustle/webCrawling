@@ -1,7 +1,6 @@
 import requests
 import json
 from bs4 import BeautifulSoup
-import copy
 from datetime import datetime
 from operator import eq
 
@@ -23,9 +22,9 @@ for i in rslt:
         str(index)
     today = datetime.today().strftime("%Y%m%d")
     # 추후 today로 변경
-
     if eq('20210302', date):
         # 오늘 날짜 공지인 경우
+        # 밑에 카카오링크 api로 변경? 추후 결정
         rslt = "[" + date + "]\n" + title + "\n" + href
         noticelist.append(rslt)
 
