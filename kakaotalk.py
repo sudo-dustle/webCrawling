@@ -107,18 +107,19 @@ def job():
 
 
 def main():
-    sched = BackgroundScheduler()
-    sched.start()
+    # sched = BackgroundScheduler()
+    # sched.start()
 
     # # 매 분 5초마다 job_1 실행
-    sched.add_job(job, 'cron', second='*/15', id="test_1")
+    # sched.add_job(job, 'cron', second='*/15', id="test_1")
+
     # 매 시간 실행
-    # schedule.every().hour.do(job)
+    schedule.every().hour.do(job)
 
     count = 0
     while True:
         print("실행중.................")
-        time.sleep(1)
+        time.sleep(100)
 
 
 if __name__ == '__main__':
