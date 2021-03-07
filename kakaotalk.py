@@ -24,8 +24,13 @@ def kakao_sendtext(chatroom_name, notice):
     hwndMain = win32gui.FindWindow(None, chatroom_name)
     hwndEdit = win32gui.FindWindowEx(hwndMain, None, "RICHEDIT50W", None)
 
-    win32api.SendMessage(hwndEdit, win32con.WM_SETTEXT, 0, notice)
-    SendReturn(hwndEdit)
+    check = len(notice)
+    if(idx < check):
+        for i in range(idx, check):
+            win32api.SendMessage(hwndEdit, win32con.WM_SETTEXT, 0, notice[i])
+            SendReturn(hwndEdit)
+            print(notice[i])
+    idx = check
 
 
 # # 엔터
@@ -87,12 +92,6 @@ def get_dwu_notice():
             rslt = "[" + date + "]\n" + title + "\n" + href
             noticelist.append(rslt)
 
-    check = len(noticelist)
-    if(idx < check):
-        for i in range(idx, check):
-            print(noticelist[i])
-
-    idx = check
     return noticelist
 
 
