@@ -16,15 +16,15 @@ from apscheduler.schedulers.background import BackgroundScheduler
 kakao_opentalk_name = 'test.bot'
 idx = 0
 
+
 # # 채팅방에 메시지 전송
-
-
 def kakao_sendtext(chatroom_name, notice):
     # # 핸들 _ 채팅방
     hwndMain = win32gui.FindWindow(None, chatroom_name)
     hwndEdit = win32gui.FindWindowEx(hwndMain, None, "RICHEDIT50W", None)
 
     check = len(notice)
+    global idx
     if(idx < check):
         for i in range(idx, check):
             win32api.SendMessage(hwndEdit, win32con.WM_SETTEXT, 0, notice[i])
@@ -64,8 +64,8 @@ def open_chatroom(chatroom_name):
 
 
 def get_dwu_notice():
-    today = datetime.today().strftime("%Y%m%d")
 
+    today = datetime.today().strftime("%Y%m%d")
     url = 'https://www.dongduk.ac.kr/ajax/board/kor/kor_notice/list.json'
     req = requests.get(url)
 
@@ -76,7 +76,6 @@ def get_dwu_notice():
     temp = data.get('data')
     rslt = temp.get('list')
 
-    global idx
     noticelist = []
     for i in rslt:
         date = i.get('REG_DT')[:8]
@@ -84,7 +83,7 @@ def get_dwu_notice():
         title = i.get('B_TITLE')
         href = 'https://www.dongduk.ac.kr/board/kor/kor_notice/detail.do?curPageNo=1&pageStatus=N&rowSize=15&B_IDX=' + \
             str(index)
-        today = datetime.today().strftime("%Y%m%d")
+
         # 추후 today로 변경
         if eq('20210302', date):
             # 오늘 날짜 공지인 경우
