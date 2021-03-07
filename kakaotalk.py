@@ -85,7 +85,7 @@ def get_dwu_notice():
             str(index)
 
         # 추후 today로 변경
-        if eq('20210302', date):
+        if eq('20210304', date):
             # 오늘 날짜 공지인 경우
             # 밑에 카카오링크 api로 변경? 추후 결정
             rslt = "[" + date + "]\n" + title + "\n" + href
