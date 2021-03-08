@@ -85,7 +85,7 @@ def get_dwu_notice():
             str(index)
 
         # 추후 today로 변경
-        if eq('20210304', date):
+        if eq('20210308', date):
             # 오늘 날짜 공지인 경우
             # 밑에 카카오링크 api로 변경? 추후 결정
             rslt = "[" + date + "]\n" + title + "\n" + href
@@ -107,19 +107,15 @@ def job():
 
 
 def main():
-    # sched = BackgroundScheduler()
-    # sched.start()
-
-    # # 매 분 5초마다 job_1 실행
-    # sched.add_job(job, 'cron', second='*/15', id="test_1")
-
-    # 매 시간 실행
-    schedule.every().hour.do(job)
-
-    count = 0
+    sched = BackgroundScheduler()
+    sched.start()
+    
+    # # 한시간 마다 job_1 실행
+    sched.add_job(job, 'interval', minutes=60)
+    
     while True:
         print("실행중.................")
-        time.sleep(100)
+        time.sleep(1)
 
 
 if __name__ == '__main__':
