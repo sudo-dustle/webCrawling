@@ -13,7 +13,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 
 # # 카톡창 이름, (활성화 상태의 열려있는 창)
-kakao_opentalk_name = 'test.bot'
+kakao_opentalk_name = 'noticebot'
 idx = 0
 
 
@@ -61,8 +61,6 @@ def open_chatroom(chatroom_name):
     time.sleep(1)
 
 # 공지사항 크롤링하기
-
-
 def get_dwu_notice():
 
     today = datetime.today().strftime("%Y%m%d")
@@ -85,7 +83,7 @@ def get_dwu_notice():
             str(index)
 
         # 추후 today로 변경
-        if eq('20210308', date):
+        if eq(today, date):
             # 오늘 날짜 공지인 경우
             # 밑에 카카오링크 api로 변경? 추후 결정
             rslt = "[" + date + "]\n" + title + "\n" + href
@@ -102,7 +100,6 @@ def job():
 
     open_chatroom(kakao_opentalk_name)  # 채팅방 열기
     notice = get_dwu_notice()
-    # kakao_sendtext(kakao_opentalk_name, f"{p_time_ymd_hms}\n{realtimeList}")  # 메시지 전송, time/실검
     kakao_sendtext(kakao_opentalk_name, notice)  # 메시지 전송, time/실검
 
 
@@ -115,7 +112,7 @@ def main():
     
     while True:
         print("실행중.................")
-        time.sleep(1)
+        time.sleep(100)
 
 
 if __name__ == '__main__':
