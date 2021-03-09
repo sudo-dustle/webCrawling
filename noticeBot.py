@@ -3,11 +3,9 @@ import win32con
 import win32api
 import win32gui
 import requests
-import schedule
 import json
 
 from operator import eq
-from bs4 import BeautifulSoup
 from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -30,6 +28,7 @@ def kakao_sendtext(chatroom_name, notice):
             win32api.SendMessage(hwndEdit, win32con.WM_SETTEXT, 0, notice[i])
             SendReturn(hwndEdit)
             print(notice[i])
+            time.sleep(3)
     idx = check
 
 
@@ -61,6 +60,8 @@ def open_chatroom(chatroom_name):
     time.sleep(1)
 
 # 공지사항 크롤링하기
+
+
 def get_dwu_notice():
 
     today = datetime.today().strftime("%Y%m%d")
@@ -89,6 +90,9 @@ def get_dwu_notice():
             rslt = "[" + date + "]\n" + title + "\n" + href
             noticelist.append(rslt)
 
+    # 리스트 역순 정렬
+    noticelist.reverse()
+
     return noticelist
 
 
@@ -106,13 +110,13 @@ def job():
 def main():
     sched = BackgroundScheduler()
     sched.start()
-    
+
     # # 한시간 마다 job_1 실행
-    sched.add_job(job, 'interval', minutes=60)
-    
+    sched.add_job(job, 'interval', minutes=15)
+
     while True:
         print("실행중.................")
-        time.sleep(100)
+        time.sleep(60)
 
 
 if __name__ == '__main__':
