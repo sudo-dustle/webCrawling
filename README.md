@@ -25,9 +25,11 @@
 4. 스케줄러를 사용해 공지사항 올라오는 주기를 고려하여 작업 시간을 설정한다. (1시간 주기로 설정함)
 5. 작업 시간마다 새롭게 올라온 공지사항을 메세지로 전송한다.
 
-> Result
+<br>
+
+> Result 📱
 
 <div align="center">
-    <img src="./img/noticeBot-image2.png" width="200" height="400">
-    <img src="./img/noticeBot-image.png" width="200" height="400">
+    <img src="./img/noticeBot-image2.jpeg" width="250" height="400">
+    <img src="./img/noticeBot-image.png" width="250" height="400">
 </div>
