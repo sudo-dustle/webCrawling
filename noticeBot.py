@@ -24,6 +24,7 @@ def kakao_sendtext(chatroom_name, noticeList):
 
     check = len(noticeList)
     global idx
+
     if(idx < check):
         for i in range(idx, check):
             win32api.SendMessage(
@@ -78,6 +79,10 @@ def get_dwu_notice():
     temp = data.get('data')
     rslt = temp.get('list')
 
+    # 만약 제목이 같으면 최신 공지만 전송하도록 하기 위해 global_title 변수 사용
+    global global_title
+    global_title = '공지방 홧팅'
+
     noticeList = []
     for i in rslt:
         date = i.get('REG_DT')[:8]
@@ -85,6 +90,12 @@ def get_dwu_notice():
         title = i.get('B_TITLE')
         href = 'https://www.dongduk.ac.kr/board/kor/kor_notice/detail.do?curPageNo=1&pageStatus=N&rowSize=15&B_IDX=' + \
             str(index)
+
+        # 최신 공지만 noticeList에 추가하도록 판별
+        if eq(title, global_title):
+            continue
+        else:
+            global_title = title
 
         # 공지사항 리스트
         if eq(today, date):
