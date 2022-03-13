@@ -129,6 +129,7 @@ def set_logger():
         filename='./noticebot_log/webCrawling.log', when='W0', encoding='utf-8', backupCount=5, atTime=datetime.time(0, 0, 0))
     rotatingHandler.setLevel(logging.DEBUG)
     rotatingHandler.setFormatter(formatter)
+    rotatingHandler.suffix = '%Y-%m-%d'
     botLogger.addHandler(rotatingHandler)
 
 
