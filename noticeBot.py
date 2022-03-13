@@ -114,22 +114,31 @@ def job():
         f"{time.localtime().tm_year}-{time.localtime().tm_mon}-{time.localtime().tm_mday} / " \
         f"{time.localtime().tm_hour}:{time.localtime().tm_min}:{time.localtime().tm_sec}"
 
-    open_chatroom(kakao_opentalk_name)  # 채팅방 열기
+    # 채팅방 열기
+    open_chatroom(kakao_opentalk_name)
     noticeList = get_dwu_notice()
-    kakao_sendtext(kakao_opentalk_name, noticeList)  # 메시지 전송, time/실검
+
+    # 메시지 전송, time/실검
+    kakao_sendtext(kakao_opentalk_name, noticeList)
 
 
 # # log 환경설정
 def set_logger():
     botLogger = logging.getLogger()
+
+    # setting log file level -> DEBUG
     botLogger.setLevel(logging.DEBUG)
     formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s",
                                   "%Y-%m-%d %H:%M:%S")
+
+    # 일주일에 한번 월요일 자정에 로그 파일 새로 생성. 최대 5개까지 파일 관리.
     rotatingHandler = TimedRotatingFileHandler(
         filename='./noticebot_log/webCrawling.log', when='W0', encoding='utf-8', backupCount=5, atTime=datetime.time(0, 0, 0))
     rotatingHandler.setLevel(logging.DEBUG)
     rotatingHandler.setFormatter(formatter)
-    rotatingHandler.suffix = '%Y-%m-%d'
+
+    # 파일 이름 suffix 설정 (webCrawling.log.yyyy-mm-dd-hh-mm 형식)
+    rotatingHandler.suffix = datetime.datetime.today().strftime("%Y-%m-%d-%H-%M")
     botLogger.addHandler(rotatingHandler)
 
 
