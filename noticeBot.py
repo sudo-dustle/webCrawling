@@ -3,12 +3,14 @@ import datetime
 import win32con
 import win32api
 import win32gui
-import requests
-import json
 import logging
 import os
-from bs4 import BeautifulSoup
-from operator import eq
+
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.by import By
+
 from apscheduler.schedulers.background import BackgroundScheduler
 from logging.handlers import TimedRotatingFileHandler
 
@@ -27,11 +29,13 @@ def kakao_sendtext(chatroom_name, noticeList):
 
     if(idx < check):
         for i in range(idx, check):
+            # 문자열로 변환하여 전송
+            notice_text = f"{noticeList[i]['number']}. {noticeList[i]['title']} - {noticeList[i]['link']}"
             win32api.SendMessage(
-                hwndEdit, win32con.WM_SETTEXT, 0, noticeList[i])
+                hwndEdit, win32con.WM_SETTEXT, 0, notice_text)
             SendReturn(hwndEdit)
             botLogger = logging.getLogger()
-            botLogger.debug(noticeList[i])
+            botLogger.debug(notice_text)
             time.sleep(3)
     idx = check
 
@@ -62,46 +66,42 @@ def open_chatroom(chatroom_name):
     time.sleep(1)
 
 # 공지사항 크롤링하기
-def get_dwu_notice():
-    today = datetime.datetime.today().strftime("%Y%m%d")
-    url = 'https://www.daegu.ac.kr/article/DG159/list'
-    req = requests.get(url)
-    req.encoding = 'utf-8'
+def get_all_notices():
+    # Chrome 드라이버 설정
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
-    soup = BeautifulSoup(req.text, 'lxml')
+    today = datetime.date.today().strftime("%Y-%m-%d")
+    # 원하는 URL 열기
+    
+    driver.get('https://www.daegu.ac.kr/article/DG159/list?pageIndex=1&')
 
-    noticeList = []
-    global global_title
-    global_title = '공지방 홧팅'
+    # 모든 공지사항 요소 가져오기
+    notice_elements = driver.find_elements(By.CSS_SELECTOR, '#sub_contents > div > table > tbody > tr')
+    
+    # 공지사항을 담을 리스트 초기화
+    all_notices = []
 
-    noticeList = []
-    notices = soup.select('#sub_contents > div > table > tbody:nth-child(3) > tr:nth-child(1) > td.list_left > a')  # 여기서 tr의 셀렉터를 정확히 설정해야 합니다.
-    for idx, notice in enumerate(notices):
-        if idx >= 3:  # 최신 공지사항 3개만 가져오도록 설정
-            break
-        title = notice.text.strip()
-        href = 'https://www.daegu.ac.kr/article/DG159/list' + notice['href'].strip()
-        date = notice.find_previous('td').text.strip().replace('-', '')
-
-        if eq(title, global_title):
+    # 각 공지사항 요소에서 제목과 링크 추출하여 리스트에 추가
+    for idx, element in enumerate(notice_elements, start=1):
+        if idx <= 12:  # 12번째 공지사항은 리스트에 추가하지 않음
             continue
-        else:
-            global_title = title
+        title_element = element.find_element(By.CSS_SELECTOR, 'td.list_left > a')
+        date_element = element.find_element(By.CSS_SELECTOR, 'td:nth-child(3)')  # 공지사항의 날짜 요소 선택
+        title = title_element.text.strip()
+        date = date_element.text.strip()
+        link = title_element.get_attribute('href')
 
-        if eq(today, date):
-            rslt = "[" + date + "]\n" + title + "\n" + href
-            noticeList.append(rslt)
+        if date == today:
+            all_notices.append({'number': idx, 'title': title, 'link': link})    # 브라우저 닫기
+    
+    driver.quit()
 
-    noticeList.reverse()
-    return noticeList
+    return all_notices
 
 # # 스케줄러 job : 매 시간마다 공지사항 크롤링해서 가져오기
 def job():
-    p_time_ymd_hms = f"{time.localtime().tm_year}-{time.localtime().tm_mon}-{time.localtime().tm_mday} / " \
-                     f"{time.localtime().tm_hour}:{time.localtime().tm_min}:{time.localtime().tm_sec}"
-
     open_chatroom(kakao_opentalk_name)
-    noticeList = get_dwu_notice()
+    noticeList = get_all_notices()
     kakao_sendtext(kakao_opentalk_name, noticeList)
 
 # # log 환경설정
