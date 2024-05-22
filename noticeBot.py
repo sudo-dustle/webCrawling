@@ -7,6 +7,7 @@ import win32gui
 import logging
 import os
 
+from operator import eq
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -86,14 +87,16 @@ def get_all_notices():
     for idx, element in enumerate(notice_elements, start=1):
         if idx <= 12:  # 12번째 공지사항은 리스트에 추가하지 않음
             continue
+        number_element = element.find_element(By.CSS_SELECTOR, 'td:nth-child(1)')
         title_element = element.find_element(By.CSS_SELECTOR, 'td.list_left > a')
         date_element = element.find_element(By.CSS_SELECTOR, 'td:nth-child(5)')  # 공지사항의 날짜 요소 선택
+        number = number_element.text.strip()
         title = title_element.text.strip()
         date = date_element.text.strip()
         link = title_element.get_attribute('href')
 
         if date == today:
-            all_notices.append({'date': date, 'title': title, 'link': link})    # 브라우저 닫기
+            all_notices.append({'number':number, 'date': date, 'title': title, 'link': link})    # 브라우저 닫기
     
     driver.quit()
 
@@ -140,7 +143,6 @@ def main():
     try:
         # 시작할 때 JSON 파일 초기화
         save_notices_to_json([], 'notices.json')
-
         sched = BackgroundScheduler()
         sched.start()
     except Exception as e:
@@ -152,7 +154,7 @@ def main():
         print(f"Error in logger setup: {e}")
 
     try:
-        sched.add_job(job, 'interval', minutes=1)
+        sched.add_job(job, 'interval', minutes=0.5)
     except Exception as e:
         print(f"Error in adding job to scheduler: {e}")
 
