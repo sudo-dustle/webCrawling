@@ -14,7 +14,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from logging.handlers import TimedRotatingFileHandler
 
 # # 카톡창 이름, (활성화 상태의 열려있는 창)
-kakao_opentalk_name = ['noticebot', 'noticetest2']
+kakao_opentalk_name = ['noticebot', 'noticebot2']
 idx = 0
 
 
