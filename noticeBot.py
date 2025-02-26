@@ -14,7 +14,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from logging.handlers import TimedRotatingFileHandler
 
 # # 카톡창 이름, (활성화 상태의 열려있는 창)
-kakao_opentalk_name = 'noticebot'
+kakao_opentalk_name = ['noticebot', 'noticetest2']
 idx = 0
 
 
@@ -78,16 +78,16 @@ def get_dwu_notice():
         notices = soup.select_one('ul.board-basic')
         elements = notices.select('li > dl')
 
-        set = set()
+        notice_set = set()
 
         for element in elements:
             id = element.a.get('onclick').split("'")[1] # onclick 속성 값 중 " ' " 로 split 해서 두번째 값 가져옴
             title = element.a.text.strip() 
             date = element.find_all('span', 'p_hide')[1].text # .find_all(태그 이름, 속성) 해당 하는 정보 모두 조회
             
-            set.add((int(id), title, date))
+            notice_set.add((int(id), title, date))
 
-        list = [element for element in set if element[0] > idx]
+        list = [element for element in notice_set if element[0] > idx]
 
         list.sort(key = lambda x:x[0])
         idx = list[-1][0]
@@ -106,12 +106,13 @@ def job():
         f"{time.localtime().tm_year}-{time.localtime().tm_mon}-{time.localtime().tm_mday} / " \
         f"{time.localtime().tm_hour}:{time.localtime().tm_min}:{time.localtime().tm_sec}"
 
-    # 채팅방 열기
-    open_chatroom(kakao_opentalk_name)
     noticeList = get_dwu_notice()
-
-    # 메시지 전송, time/실검
-    kakao_sendtext(kakao_opentalk_name, noticeList)
+    
+    for chatroom in kakao_opentalk_name: 
+        # 채팅방 2개 모두 오픈
+        open_chatroom(kakao_opentalk_name)
+        # 메시지 전송, time/실검
+        kakao_sendtext(kakao_opentalk_name, noticeList)
 
 
 # # log 환경설정
