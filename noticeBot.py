@@ -110,9 +110,9 @@ def job():
     
     for chatroom in kakao_opentalk_name: 
         # 채팅방 2개 모두 오픈
-        open_chatroom(kakao_opentalk_name)
+        open_chatroom(chatroom)
         # 메시지 전송, time/실검
-        kakao_sendtext(kakao_opentalk_name, noticeList)
+        kakao_sendtext(chatroom, noticeList)
 
 
 # # log 환경설정
@@ -134,7 +134,7 @@ def set_logger():
     rotatingHandler.suffix = datetime.datetime.today().strftime("%Y-%m-%d-%H-%M")
     botLogger.addHandler(rotatingHandler)
 
-
+        
 def main():
     sched = BackgroundScheduler()
     sched.start()
